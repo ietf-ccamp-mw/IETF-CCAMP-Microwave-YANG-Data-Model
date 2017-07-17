@@ -1,0 +1,17 @@
+(intro) This is a demonstration of the dynamic frequency control application using the YANG data model. This application monitors the SNIR and when it detects interference, then it changes the frequency to improve the link quality. 
+
+(1)First step of the process is reading the SNIR value of the node, in this example, RLT-B:CT-1. This value describes the quality of the connection on the link.
+
+(1.5) (point to the old frequency) the SNIR value is 20. The current transmit frequency of the link is this value.
+
+(2)Next step is comparing this value with the predefined threshold, and if it's lower, we try to improve the connectivity by assigning a new frequency to the link.
+
+(3)Next step is disabling the transmission before changing the frequency values.
+
+(4)In the next step, we set the frequencies for both transmitting and receiving carrier terminations.
+
+(4.5) (point to the new frequency) These are the new values for the transmitter and receiver frequencies of both pair carrier terminations. 
+
+(5)In the final step, after the frequencies are set, we re-enable the transmission for both nodes. 
+
+
