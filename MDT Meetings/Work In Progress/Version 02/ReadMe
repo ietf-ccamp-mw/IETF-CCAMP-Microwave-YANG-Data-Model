@@ -1,9 +1,0 @@
-Working progress on Version 2 of the radio link model
-
-Revsion history
-August 14
-Break out of the protection related parts into a separate generic module
-August 30
-Added standard references to some more data nodes.
-Changed the name of the temporary container statistics to names which are not in conclict with the existing RFC.
-Added import statement and prefix for the protection module.
