@@ -1,0 +1,2 @@
+Individual draft submitted March 5, 2018
+A draft for microwave topology YANG model. It augments the link container from the TE topology model, and defines the microwave specific data nodes in grouping.
