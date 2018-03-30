@@ -1,9 +1,8 @@
-IETF CCAMP draft
+IETF CCAMP draft submitted March 30, 2018
 - "Interface identities", "Radio-link-terminal mode identities" , "Coding and modulation identities", and "TDM-type identities" have been broken out from the main module and put in a new module "ietf-microwave-types".
 - Added an editor's note that "ID-draft editors" should be changed to "Editors"
 - Added a single editor's note that all XXXX should be replaced with the proper RFC number, instead of one note for each case
-- Updated draft-ietf-netmod-rfc7223bis to RFC8343
+- Updated references that have become RFCs
 - Updated requirements language with a reference to RFC8174
 - Updated to a consistent use of dot "." as the decimal separator
 - Added QAM, BPSK, and QPSK to the list of acronyms
-Dates remain to be updated before submission
