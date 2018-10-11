@@ -1,0 +1,2328 @@
+<?xml version="1.0" encoding="US-ASCII"?> 
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd">
+<!--  vi: set et smarttab sw=2 tabstop=4:--> 
+<?rfc toc="yes"?> 
+<?rfc tocompact="yes"?> 
+<?rfc tocdepth="3"?> 
+<?rfc tocindent="yes"?> 
+<?rfc symrefs="yes"?> 
+<?rfc sortrefs="yes"?> 
+<?rfc comments="yes"?> 
+<?rfc inline="yes"?> 
+<?rfc compact="yes"?> 
+<?rfc subcompact="no"?> 
+
+<rfc category="std" docName="draft-ietf-ccamp-mw-yang-09" ipr="trust200902" obsoletes="" updates="" submissionType="IETF" xml:lang="en">
+ <front>
+  <title abbrev="Microwave YANG Model">A YANG Data Model for Microwave Radio Link</title>
+
+  <author initials="J." surname="Ahlberg" fullname="Jonas Ahlberg">
+   <organization>Ericsson AB</organization>
+   <address>
+    <postal>
+     <street>Lindholmspiren 11</street>
+     <city>Goteborg</city>
+     <region></region>
+     <code>417 56</code>
+     <country>Sweden</country>
+    </postal>
+    <email>jonas.ahlberg@ericsson.com</email>
+   </address>
+  </author>
+
+  <author initials="M." surname="Ye" fullname="Ye Min">
+   <organization>Huawei Technologies</organization>
+   <address>
+    <postal>
+     <street>No.1899, Xiyuan Avenue</street>
+     <city>Chengdu</city>
+     <region></region>
+     <code>611731</code>
+     <country>P.R.China</country>
+    </postal>
+    <email>amy.yemin@huawei.com</email>
+   </address>
+  </author>
+
+  <author initials="X." surname="Li" fullname="Xi Li">
+   <organization>NEC Laboratories Europe</organization>
+   <address>
+    <postal>
+     <street>Kurfursten-Anlage 36</street>
+     <city>Heidelberg</city>
+     <region></region>
+     <code>69115</code>
+     <country>Germany</country>
+    </postal>
+    <email>Xi.Li@neclab.eu</email>
+   </address>
+  </author>
+
+  <author initials="D." surname="Spreafico" fullname="Daniela Spreafico">
+   <organization>Nokia - IT</organization>
+   <address>
+    <postal>
+     <street>Via Energy Park, 14</street>
+     <city>Vimercate (MI)</city>
+     <region></region>
+     <code>20871</code>
+     <country>Italy</country>
+    </postal>
+    <email>daniela.spreafico@nokia.com</email>
+   </address>
+  </author>
+  
+  <author initials="M." surname="Vaupotic" fullname="Marko Vaupotic">
+   <organization>Aviat Networks</organization>
+   <address>
+    <postal>
+     <street>Motnica 9</street>
+     <city>Trzin-Ljubljana</city>
+     <region></region>
+     <code>1236</code>
+     <country>Slovenia</country>
+    </postal>
+    <email>Marko.Vaupotic@Aviatnet.com</email>
+   </address>
+  </author>
+  
+  <date  month="August" day="31" year="2018" />
+  <workgroup>CCAMP Working Group</workgroup>
+
+  <abstract>
+   <t>This document defines a YANG data model for control and management of the radio link interfaces, and their connectivity to packet (typically Ethernet) interfaces in a microwave/millimeter wave node. The data nodes for management of the interface protection functionality is broken out into a separate and generic YANG data model in order to make it available also for other interface types.</t> 
+  </abstract>
+
+  <note title="RFC Ed. Note">
+   <t>// RFC Ed.: replace all XXXX throughout the document with actual RFC numbers and remove this note</t>
+  </note>
+ </front>
+
+
+ <middle>
+  <section title="Introduction" toc="default">
+   <t>This document defines a YANG data model for management and control of the radio link interface(s) and the relationship to packet (typically Ethernet) and/or TDM interfaces in a microwave/millimeter wave node. ETSI EN 302 217 series defines the characteristics and requirements of microwave/millimeter wave equipment and antennas. Especially ETSI EN 302 217-2 <xref target="EN302217-2" pageno="false" format="default" /> specifies the essential parameters for the systems operating from 1.4GHz to 86GHz. The data model includes configuration and state data according to the new Network Management Datastore Architecture <xref target="RFC8342" pageno="false" format="default" />.</t>
+   
+   <t>The design of the data model follows the framework for management and control of microwave and millimeter wave interface parameters defined
+   in <xref target="I-D.ietf-ccamp-microwave-framework" pageno="false" format="default" />. This framework identifies the need and the scope of the YANG data model, the use cases and requirements that the model needs to support. Moreover, it provides a detailed gap analysis to identify the missing parameters and functionalities of the existing and established models to support the specified use cases and requirements, and based on that recommends how the gaps should be filled with the development of the new model. According to the conclusion of the gap analysis, the structure of the data model is based on the structure defined in <xref target="I-D.ahlberg-ccamp-microwave-radio-link" pageno="false" format="default" /> and it augments <xref target="RFC8343" pageno="false" format="default" /> to align with the same structure for management of the packet
+   interfaces. More specifically, the model will include interface layering to manage the capacity provided by a radio link terminal for the associated Ethernet and TDM interfaces, using the principles for interface layering described in <xref target="RFC8343" pageno="false" format="default" /> as a basis.</t>
+
+   <t>The data nodes for management of the interface protection functionality is broken out into a separate and generic YANG data module in order to make it available also for other interface types.</t>
+
+   <t>The designed YANG data model uses established microwave equipment and radio standards, such as ETSI EN 302 217-2, and the IETF: Radio
+   Link Model <xref target="I-D.ahlberg-ccamp-microwave-radio-link" pageno="false" format="default" /> and the ONF: Microwave Modeling <xref target="ONF-model" pageno="false" format="default" /> as the basis for the definition of the detailed leafs/parameters, and proposes new ones to cover identified gaps which are analyzed in <xref target="I-D.ietf-ccamp-microwave-framework" pageno="false" format="default" />.</t>
+
+   <section title="Terminology and Definitions" toc="default">
+    <t>The following terms are used in this document:</t>
+   
+    <t>Carrier Termination (CT) is an interface for the capacity provided over the air by a single carrier. It is typically defined by its transmitting and receiving frequencies.</t>  
+   
+    <t>Radio Link Terminal (RLT) is an interface providing packet capacity and/or TDM capacity to the associated Ethernet and/or TDM interfaces in a node and used for setting up a transport service over a microwave/millimeter wave link.</t>
+   
+    <t>The following acronyms are used in this document:</t>
+   
+    <t>ACM Adaptive Coding Modulation</t>
+
+    <t>ATPC Automatic Transmit Power Control</t>
+
+    <t>BPSK Binary Phase-Shift Keying</t>
+
+    <t>CM Coding Modulation</t>
+   
+    <t>CT Carrier Termination</t>
+
+    <t>RLT Radio Link Terminal</t>
+
+    <t>RTPC Remote Transmit Power Control</t>
+
+    <t>XPIC Cross Polarization Interference Cancellation</t>
+
+    <t>MIMO Multiple-Input Multiple-Output</t>
+
+    <t>QAM Quadrature Amplitude Modulation</t>
+
+    <t>QPSK Quadrature Phase-Shift Keying</t>
+   </section> 
+   <!--  Terminology and Definitions END  -->
+   
+   <section title="Tree Structure" toc="default">
+    <t>A simplified graphical representation of the data model is used in chapter 3.1 of this this document. The meaning of the symbols in these diagrams is defined in <xref target="RFC8340" pageno="false" format="default" />.</t>
+   </section> 
+   <!--  Tree Structure END  -->
+  </section> 
+  <!--  Introduction END  -->
+
+  <section title="Requirements Language" toc="default">
+   <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 <xref target="RFC2119" pageno="false" format="default" /> <xref target="RFC8174" pageno="false" format="default" /> when, and only when, they appear in all capitals, as shown here.</t>
+  </section> 
+  <!--  Requirements Language END  -->
+
+  <section anchor="DM" title="Microwave Radio Link YANG Data Model" toc="default">
+   <section anchor="tree" title="YANG Tree" toc="default">
+    <t>
+     <figure anchor="treefigure" title="" suppress-title="true" align="left" alt="" width="" height="">
+      <artwork xml:space="preserve" name="" type="" align="left" alt="" width="" height="">
+<![CDATA[ 
+module: ietf-microwave-radio-link
+    +--rw radio-link-protection-groups
+    |  +--rw protection-group* [name]
+    |     +--rw name                            string
+    |     +--rw protection-architecture-type?   identityref
+    |     +--rw members*                        if:interface-ref
+    |     +--rw operation-type?                 enumeration
+    |     +--rw working-entity*                 if:interface-ref
+    |     +--rw revertive-wait-to-restore?      uint16
+    |     +--rw hold-off-timer?                 uint16
+    |     +--ro status?                         identityref
+    |     +---x manual-switch-working
+    |     +---x manual-switch-protection
+    |     +---x forced-switch
+    |     +---x lockout-of-protection
+    |     +---x freeze
+    |     +---x exercise
+    |     +---x clear
+    +--rw xpic-pairs {xpic}?
+    |  +--rw xpic-pair* [name]
+    |     +--rw name       string
+    |     +--rw enabled?   boolean
+    |     +--rw members*   if:interface-ref
+    +--rw mimo-groups {mimo}?
+       +--rw mimo-group* [name]
+          +--rw name       string
+          +--rw enabled?   boolean
+          +--rw members*   if:interface-ref
+  augment /if:interfaces/if:interface:
+    +--rw id?                     string
+    +--rw mode                    identityref
+    +--rw carrier-terminations*   if:interface-ref
+    +--rw rlp-groups*
+    |       -> /radio-link-protection-groups/protection-group/name
+    +--rw xpic-pairs*             -> /xpic-pairs/xpic-pair/name
+    |       {xpic}?
+    +--rw mimo-groups*            -> /mimo-groups/mimo-group/name
+    |       {mimo}?
+    +--rw tdm-connections* [tdm-type] {tdm}?
+       +--rw tdm-type           identityref
+       +--rw tdm-connections    uint16
+  augment /if:interfaces/if:interface:
+    +--rw carrier-id?                     string
+    +--rw tx-enabled?                     boolean
+    +--ro tx-oper-status?                 enumeration
+    +--rw tx-frequency                    uint32
+    +--rw (freq-or-distance)
+    |  +--:(rx-frequency)
+    |  |  +--rw rx-frequency?                   uint32
+    |  +--:(duplex-distance)
+    |     +--rw duplex-distance?                int32
+    +--ro actual-rx-frequency?            uint32
+    +--ro actual-duplex-distance?         uint32
+    +--rw channel-separation              uint32
+    +--rw polarization?                   enumeration
+    +--rw (power-mode)
+    |  +--:(rtpc)
+    |  |  +--rw rtpc
+    |  |     +--rw maximum-nominal-power    power
+    |  +--:(atpc)
+    |     +--rw atpc
+    |        +--rw maximum-nominal-power    power
+    |        +--rw atpc-lower-threshold     power
+    |        +--rw atpc-upper-threshold     power
+    +--ro actual-transmitted-level?       power
+    +--ro actual-received-level?          power
+    +--rw (coding-modulation-mode)
+    |  +--:(single)
+    |  |  +--rw single
+    |  |     +--rw selected-cm         identityref
+    |  +--:(adaptive)
+    |     +--rw adaptive
+    |        +--rw selected-min-acm       identityref
+    |        +--rw selected-max-acm       identityref
+    +--ro actual-tx-cm?                   identityref
+    +--ro actual-snir?                    decimal64
+    +--ro actual-xpi?                     decimal64 {xpic}?
+    +--rw ct-performance-thresholds
+    |  +--rw received-level-alarm-threshold?      power
+    |  +--rw transmitted-level-alarm-threshold?   power
+    |  +--rw ber-alarm-threshold?                 enumeration
+    +--rw if-loop?                        enumeration
+    +--rw rf-loop?                        enumeration
+    +--ro capabilities
+    |  +--ro min-tx-frequency?          uint32
+    |  +--ro max-tx-frequency?          uint32
+    |  +--ro min-rx-frequency?          uint32
+    |  +--ro max-rx-frequency?          uint32
+    |  +--ro minimum-power?             power
+    |  +--ro maximum-available-power?   power
+    |  +--ro available-min-acm?         identityref
+    |  +--ro available-max-acm?         identityref
+    +--ro error-performance-statistics
+    |  +--ro bbe?   yang:counter32
+    |  +--ro es?    yang:counter32
+    |  +--ro ses?   yang:counter32
+    |  +--ro uas?   yang:counter32
+    +--ro radio-performance-statistics
+       +--ro min-rltm?   power
+       +--ro max-rltm?   power
+       +--ro min-tltm?   power
+       +--ro max-tltm?   power
+]]> 
+      </artwork>
+     </figure>
+    </t>
+   </section>
+   <!--  YANG Tree END  --> 
+
+   <section anchor="explanation" title="Explanation of the Microwave Data Model" toc="default">
+    <t>The leafs in the Interface Management Module augmented by Radio Link Terminal (RLT) and Carrier Termination (CT) are not always applicable.</t>
+
+    <t>"/interfaces/interface/enabled" is not applicable for RLT. Enable and disable of an interface is done in the constituent CTs.</t>
+
+    <t>The packet related measurements "in-octets", "in-unicast-pkts", "in-broadcast-pkts", "in-multicast-pkts", "in-discards", "in-errors", "in-unknown-protos", "out-octets", "out-unicast-pkts", "out-broadcast-pkts", "out-multicast-pkts", "out-discards", "out-errors" are not within the scope of the microwave radio link domain and therefore not applicable for RLT and CT.</t>
+   </section>
+   <!--  Explanation of the Microwave Data Model END  -->
+  </section>
+  <!--  Microwave Radio Link YANG Data Model END  -->
+  
+  <section anchor="codeA" title="Microwave Radio Link YANG Module" toc="default">
+   <t>This module imports typedefs and modules from <xref target="RFC6991" pageno="false" format="default" />, <xref target="RFC8343" pageno="false" format="default" /> and <xref target="RFC7224" pageno="false" format="default" />, and it references <xref target="TR102311" pageno="false" format="default" />, <xref target="EN302217-1" pageno="false" format="default" />, <xref target="EN301129" pageno="false" format="default" />, and <xref target="G.826" pageno="false" format="default" />.</t>
+   
+   <figure anchor="YANGRadioLink" title="" suppress-title="true" align="left" alt="" width="" height="">
+    <artwork xml:space="preserve" name="" type="" align="left" alt="" width="" height="">
+<![CDATA[
+<CODE BEGINS> file "ietf-microwave-radio-link@2018-06-30.yang"
+
+module ietf-microwave-radio-link {
+  yang-version 1.1;
+  namespace "urn:ietf:params:xml:ns:yang:ietf-microwave-radio-link";
+  prefix mrl;
+
+  import ietf-yang-types {
+    prefix yang;
+    reference "RFC 6991";
+  }
+
+  import ietf-interfaces {
+    prefix if;
+    reference "RFC 8343";
+  }
+
+  import ietf-interface-protection {
+    prefix ifprot;
+    reference "RFC XXXX";
+  }
+
+  import ietf-microwave-types {
+    prefix mw-types;
+    reference "RFC XXXX";
+  }
+
+  organization
+   "Internet Engineering Task Force (IETF) CCAMP WG";
+
+  contact
+   "WG List: <mailto:ccamp@ietf.org>
+
+   ID-draft editors:
+   // RFC Ed.: replace ID-draft editors with Editors and remove
+   // this note
+     Jonas Ahlberg (jonas.ahlberg@ericsson.com);
+     Min Ye (amy.yemin@huawei.com);
+     Xi Li (Xi.Li@neclab.eu);
+     Daniela Spreafico (daniela.spreafico@nokia.com)
+     Marko Vaupotic (Marko.Vaupotic@aviatnet.com)";
+
+  description
+    "This is a module for the entities in
+    a generic microwave system.
+
+    Copyright (c) 2018 IETF Trust and the persons identified as
+    authors of the code.  All rights reserved.
+    Redistribution and use in source and binary forms, with or
+    without modification, is permitted pursuant to, and subject
+    to the license terms contained in, the Simplified BSD License
+    set forth in Section 4.c of the IETF Trust's Legal Provisions
+    Relating to IETF Documents
+    (http://trustee.ietf.org/license-info).
+
+    This version of this YANG module is part of RFC XXXX; see
+    the RFC itself for full legal notices.
+
+    Copyright (c) 2018 IETF Trust and the persons identified as
+    authors of the code.  All rights reserved.";
+
+  revision 2018-06-30 {
+    description "Initial revision.";
+    reference "RFC XXXX: A YANG Data Model for Microwave Radio Link";
+  }
+
+  /*
+   * Features
+   */
+   
+  feature xpic {
+    description
+      "Indicates that the device supports XPIC.";
+    reference "ETSI TR 102 311";
+  }
+
+  feature mimo {
+    description
+      "Indicates that the device supports MIMO.";
+    reference "ETSI TR 102 311";
+  }
+
+  feature tdm {
+    description
+      "Indicates that the device supports TDM.";
+  }
+
+  /*
+   * Typedefs
+   */
+
+  typedef power {
+    type decimal64 {
+      fraction-digits 1;
+    }
+    description
+      "Type used for power values, selected and measured.";
+  }
+
+  /*
+   * Radio Link Terminal (RLT)
+   */
+
+  augment "/if:interfaces/if:interface" {
+    when "derived-from-or-self(if:type,"
+       + "'mw-types:radio-link-terminal')";
+    description
+      "Addition of data nodes for radio link terminal to
+       the standard Interface data model, for interfaces of
+       the type 'radio-link-terminal'.";
+
+    leaf id {
+      type string;
+      description
+        "Descriptive identity of the radio link terminal used by
+         far-end RLT to check that it's connected to the correct
+         near-end RLT. Does not need to be configured if this check
+         is not used.";
+    }
+
+    leaf mode {
+      type identityref {
+        base mw-types:rlt-mode;
+      }
+      mandatory true;
+      description
+        "A description of the mode in which the radio link
+         terminal is configured. The format is X plus Y.
+         X represent the number of bonded carrier terminations.
+         Y represent the number of protecting carrier
+         terminations.";
+    }
+
+    leaf-list carrier-terminations {
+      type if:interface-ref;
+      must "derived-from-or-self(/if:interfaces/if:interface"
+         + "[if:name = current()]"
+         + "/if:type, 'mw-types:carrier-termination')" {
+        description
+          "The type of interface must be
+           'carrier-termination'.";
+      }
+      min-elements 1;
+      description
+        "A list of references to carrier terminations
+         included in the radio link terminal.";
+    }
+
+    leaf-list rlp-groups {
+      type leafref {
+        path "/mrl:radio-link-protection-groups/"
+           + "mrl:protection-group/mrl:name";
+      }
+      description
+        "A list of references to the carrier termination
+         groups configured for radio link protection in this
+         radio link terminal.";
+    }
+
+    leaf-list xpic-pairs {
+      if-feature xpic;
+      type leafref {
+        path "/mrl:xpic-pairs/mrl:xpic-pair/mrl:name";
+      }
+
+      description
+        "A list of references to the XPIC pairs used in this
+         radio link terminal. One pair can be used by two
+         terminals.";
+      reference "ETSI TR 102 311";
+    }
+
+    leaf-list mimo-groups {
+      if-feature mimo;
+      type leafref {
+        path "/mrl:mimo-groups/mrl:mimo-group/mrl:name";
+      }
+      description
+        "A reference to the MIMO group used in this
+         radio link terminal. One group can be used by more
+         than one terminal.";
+      reference "ETSI TR 102 311";
+    }
+
+    list tdm-connections {
+      if-feature tdm;
+      key "tdm-type";
+      description
+        "A list stating the number of active TDM connections
+         of a specified tdm-type that is configured to be
+         supported by the RLT.";
+      leaf tdm-type {
+        type identityref {
+          base mw-types:tdm-type;
+        }
+        description
+          "The type of TDM connection, which also indicates
+          the supported capacity.";
+      }
+      leaf tdm-connections {
+        type uint16;
+        mandatory true;
+        description
+          "Number of connections of the specified type.";
+      }
+    }
+  }
+
+  /*
+   * Carrier Termination
+   */
+
+  augment "/if:interfaces/if:interface" {
+    when "derived-from-or-self(if:type,"
+       + "'mw-types:carrier-termination')";
+
+    description
+      "Addition of data nodes for carrier termination to
+       the standard Interface data model, for interfaces
+       of the type 'carrier-termination'.";
+
+    leaf carrier-id {
+      type string;
+      default "A";
+      description
+        "ID of the carrier. (e.g. A, B, C or D)
+         Used in XPIC & MIMO configurations to check that
+         the carrier termination is connected to the correct
+         far-end carrier termination. Should be the same
+         carrier ID on both sides of the hop.
+         Defaulted when not MIMO or XPIC.";
+    }
+
+    leaf tx-enabled {
+      type boolean;
+      default "false";
+      description
+        "Disables (false) or enables (true) the transmitter.
+         Only applicable when the interface is enabled
+         (interface:enabled = true) otherwise it's always
+         disabled.";
+    }
+
+    leaf tx-oper-status {
+      type enumeration {
+        enum "off" {
+          description "Transmitter is off.";
+        }
+        enum "on" {
+          description "Transmitter is on.";
+        }
+        enum "standby" {
+          description "Transmitter is in standby.";
+        }
+      }
+      config false;
+      description
+        "Shows the operative status of the transmitter.";
+    }
+
+    leaf tx-frequency {
+      type uint32;
+      units "kHz";
+      mandatory true;
+      description
+        "Selected transmitter frequency.";
+    }
+
+    choice freq-or-distance {
+      leaf rx-frequency {
+        type uint32;
+        units "kHz";
+        description
+          "Selected receiver frequency.";
+      }
+      leaf duplex-distance {
+        type int32;
+        units "kHz";
+        description
+          "Distance between transmitter and receiver frequencies.";
+      }
+      mandatory true;
+      description
+        "A choice to configure rx-frequency directly or by computing
+         it as tx-frequency subtracted with the configured
+         duplex-distance." ;
+    }
+
+    leaf actual-rx-frequency {
+      type uint32;
+      units "kHz";
+      config false;
+      description
+        "Computed receiver frequency.";
+    }
+
+    leaf actual-duplex-distance {
+      type uint32;
+      units "kHz";
+      config false;
+      description
+        "Computed distance between Tx & Rx frequencies.";
+    }
+
+    leaf channel-separation {
+      type uint32;
+      units "kHz";
+      mandatory true;
+      description
+        "The amount of bandwidth allocated to a carrier. The distance
+         between adjacent channels in a radio frequency channels
+         arrangement";
+      reference "ETSI EN 302 217-1";
+    }
+
+    leaf polarization {
+      type enumeration {
+        enum "horizontal" {
+          description "Horizontal polarization.";
+        }
+        enum "vertical" {
+          description "Vertical polarization.";
+        }
+        enum "not-specified" {
+          description "Polarization not specified.";
+        }
+      }
+
+      default "not-specified";
+      description
+        "Polarization - A textual description for info only.";
+    }
+
+    choice power-mode {
+      container rtpc {
+        description
+          "Remote Transmit Power Control (RTPC).";
+        reference "ETSI EN 302 217-1";
+        leaf maximum-nominal-power {
+          type power {
+            range "-99..99";
+          }
+          units "dBm";
+          mandatory true;
+          description
+            "Selected output power.";
+          reference "ETSI EN 302 217-1";
+        }
+      }
+      container atpc {
+        description
+          "Automatic Transmit Power Control (ATPC).";
+        reference "ETSI EN 302 217-1";
+
+        leaf maximum-nominal-power {
+          type power {
+            range "-99..99";
+          }
+          units "dBm";
+          mandatory true;
+          description
+            "Selected maximum output power. Minimum output
+             power is the same as the system capability,
+             available-min-output-power.";
+          reference "ETSI EN 302 217-1";
+        }
+
+        leaf atpc-lower-threshold  {
+          type power {
+            range "-99..-30";
+          }
+          units "dBm";
+          must "current() <= ../atpc-upper-threshold";
+          mandatory true;
+          description
+            "The lower threshold for the input power at far-end
+             used in the ATPC mode.";
+          reference "ETSI EN 302 217-1";
+        }
+
+        leaf atpc-upper-threshold  {
+          type power {
+            range "-99..-30";
+          }
+          units "dBm";
+          mandatory true;
+          description
+            "The upper threshold for the input power at far-end
+             used in the ATPC mode.";
+          reference "ETSI EN 302 217-1";
+        }
+      }
+      mandatory true;
+      description
+        "A choice of Remote Transmit Power Control (RTPC)
+         or Automatic Transmit Power Control (ATPC).";
+    }
+
+    leaf actual-transmitted-level {
+      type power {
+        range "-99..99";
+      }
+      units "dBm";
+      config false;
+      description
+        "Actual transmitted power level (0.1 dBm resolution).";
+      reference "ETSI EN 301 129";
+    }
+
+    leaf actual-received-level {
+      type power {
+        range "-99..-20";
+      }
+      units "dBm";
+      config false;
+      description
+        "Actual received power level (0.1 dBm resolution).";
+      reference "ETSI EN 301 129";
+    }
+
+    choice coding-modulation-mode {
+      container single {
+        description "A single modulation order only.";
+        reference "ETSI EN 302 217-1";
+
+        leaf selected-cm {
+          type identityref {
+            base mw-types:coding-modulation;
+          }
+          mandatory true;
+          description
+            "Selected the single coding/modulation.";
+        }
+      }
+
+      container adaptive {
+        description "Adaptive coding/modulation.";
+        reference "ETSI EN 302 217-1";
+
+        leaf selected-min-acm {
+          type identityref {
+            base mw-types:coding-modulation;
+          }
+          mandatory true;
+          description
+            "Selected minimum coding/modulation.
+             Adaptive coding/modulation shall not go
+             below this value.";
+        }
+
+        leaf selected-max-acm {
+          type identityref {
+            base mw-types:coding-modulation;
+          }
+          mandatory true;
+          description
+            "Selected maximum coding/modulation.
+             Adaptive coding/modulation shall not go
+             above this value.";
+        }
+      }
+      mandatory true;
+      description
+        "A selection of single or
+         adaptive coding/modulation mode.";
+    }
+
+    leaf actual-tx-cm {
+      type identityref {
+         base mw-types:coding-modulation;
+      }
+      config false;
+      description
+        "Actual coding/modulation in transmitting direction.";
+    }
+
+    leaf actual-snir {
+      type decimal64 {
+        fraction-digits 1;
+        range "0..99";
+      }
+      units "dB";
+      config false;
+      description
+        "Actual signal to noise plus interference ratio.
+         (0.1 dB resolution).";
+    }
+
+    leaf actual-xpi {
+      if-feature xpic;
+      type decimal64 {
+        fraction-digits 1;
+        range "0..99";
+      }
+      units "dB";
+      config false;
+      description
+        "The actual carrier to cross-polar interference.
+         Only valid if XPIC is enabled. (0.1 dB resolution).";
+      reference "ETSI TR 102 311";
+    }
+
+    container ct-performance-thresholds {
+      description
+        "Specification of thresholds for when alarms should
+         be sent and cleared for various performance counters.";
+
+      leaf received-level-alarm-threshold {
+        type power {
+          range "-99..-30";
+        }
+        units "dBm";
+        default "-99";
+        description
+          "An alarm is sent when the received power level is
+           below the specified threshold.";
+        reference "ETSI EN 301 129";
+      }
+
+      leaf transmitted-level-alarm-threshold {
+        type power {
+          range "-99..99";
+        }
+        units "dBm";
+        default "-99";
+        description
+          "An alarm is sent when the transmitted power level
+           is below the specified threshold.";
+        reference "ETSI EN 301 129";
+      }
+
+      leaf ber-alarm-threshold {
+        type enumeration {
+          enum "1e-9" {
+            description "Threshold at 1e-9 (10^-9).";
+          }
+          enum "1e-8" {
+            description "Threshold at 1e-8 (10^-8).";
+          }
+          enum "1e-7" {
+            description "Threshold at 1e-7 (10^-7).";
+          }
+          enum "1e-6" {
+            description "Threshold at 1e-6 (10^-6).";
+          }
+          enum "1e-5" {
+            description "Threshold at 1e-5 (10^-5).";
+          }
+          enum "1e-4" {
+            description "Threshold at 1e-4 (10^-4).";
+          }
+          enum "1e-3" {
+            description "Threshold at 1e-3 (10^-3).";
+          }
+          enum "1e-2" {
+            description "Threshold at 1e-2 (10^-2).";
+          }
+          enum "1e-1" {
+            description "Threshold at 1e-1 (10^-1).";
+          }
+        }
+        default "1e-6";
+        description
+          "Specification of at which BER an alarm should
+           be raised.";
+        reference "ETSI EN 302 217-1";
+      }
+    }
+
+    leaf if-loop {
+      type enumeration {
+        enum disabled {
+          description "Disables the IF Loop.";
+        }
+        enum client {
+          description
+            "Loops the signal back to the client side.";
+        }
+        enum radio {
+          description
+            "Loops the signal back to the radio side.";
+        }
+      }
+      default "disabled";
+      description
+        "Enable (client/radio) or disable (disabled)
+         the IF loop, which loops the signal back to
+         the client side or the radio side.";
+    }
+
+    leaf rf-loop {
+      type enumeration {
+        enum disabled {
+          description "Disables the RF Loop.";
+        }
+        enum client {
+          description
+            "Loops the signal back to the client side.";
+        }
+        enum radio {
+          description
+            "Loops the signal back to the radio side.";
+        }
+      }
+      default "disabled";
+      description
+        "Enable (client/radio) or disable (disabled)
+         the RF loop, which loops the signal back to
+         the client side or the radio side.";
+    }
+
+    container capabilities {
+      config false;
+      description
+        "Capabilities of the installed equipment and
+         some selected configurations.";
+
+      leaf min-tx-frequency {
+        type uint32;
+        units "kHz";
+        description
+         "Minimum Tx frequency possible to use.";
+      }
+
+      leaf max-tx-frequency {
+        type uint32;
+        units "kHz";
+        description
+          "Maximum Tx frequency possible to use.";
+      }
+
+      leaf min-rx-frequency {
+        type uint32;
+        units "kHz";
+        description
+          "Minimum Rx frequency possible to use.";
+      }
+
+      leaf max-rx-frequency {
+        type uint32;
+        units "kHz";
+        description
+          "Maximum Tx frequency possible to use.";
+      }
+
+      leaf minimum-power {
+        type power;
+        units "dBm";
+        description
+          "The minimum output power supported.";
+        reference "ETSI EN 302 217-1";
+      }
+
+      leaf maximum-available-power {
+        type power;
+        units "dBm";
+        description
+          "The maximum output power supported.";
+        reference "ETSI EN 302 217-1";
+      }
+
+      leaf available-min-acm {
+        type identityref {
+          base mw-types:coding-modulation;
+        }
+        description
+          "Minimum coding-modulation possible to use.";
+      }
+
+      leaf available-max-acm {
+        type identityref {
+          base mw-types:coding-modulation;
+        }
+        description
+          "Maximum coding-modulation possible to use.";
+      }
+    }
+
+    container error-performance-statistics {
+      config false;
+      description
+        "ITU-T G.826 error performance statistics relevant for
+         a microwave/millimeter wave carrier.";
+
+      leaf bbe {
+        type yang:counter32;
+        units "number of block errors";
+        description
+          "Number of Background Block Errors (BBE) during the
+          interval. A BBE is an errored block not occurring as
+          part of an SES.";
+        reference "ITU-T G.826";
+      }
+
+      leaf es {
+        type yang:counter32;
+        units "seconds";
+        description
+          "Number of Errored Seconds (ES) since last reset.
+           An ES is a one-second period with one or more errored
+           blocks or at least one defect.";
+        reference "ITU-T G.826";
+      }
+
+      leaf ses {
+        type yang:counter32;
+        units "seconds";
+        description
+          "Number of Severely Errored Seconds (SES) during the
+           interval. SES is a one-second period which contains
+           equal or more than 30% errored blocks or at least
+           one defect. SES is a subset of ES.";
+        reference "ITU-T G.826";
+      }
+
+      leaf uas {
+        type yang:counter32;
+        units "seconds";
+        description
+          "Number of Unavailable Seconds (UAS), that is, the
+           total time that the node has been unavailable during
+           a fixed measurement interval.";
+        reference "ITU-T G.826";
+      }
+    }
+
+    container radio-performance-statistics {
+      config false;
+      description
+        "ETSI EN 301 129 radio physical interface statistics relevant
+         for a carrier termination.";
+
+      leaf min-rltm {
+        type power {
+          range "-99..-20";
+        }
+        units "dBm";
+        description
+          "Minimum received power level since last reset.";
+        reference "ETSI EN 301 129";
+      }
+
+      leaf max-rltm {
+        type power {
+          range "-99..-20";
+        }
+        units "dBm";
+        description
+          "Maximum received power level since last reset.";
+        reference "ETSI EN 301 129";
+      }
+
+      leaf min-tltm {
+        type power {
+          range "-99..99";
+        }
+        units "dBm";
+        description
+          "Minimum transmitted power level since last reset.";
+        reference "ETSI EN 301 129";
+      }
+
+      leaf max-tltm {
+        type power {
+          range "-99..99";
+        }
+        units "dBm";
+        description
+          "Maximum transmitted power level since last reset.";
+        reference "ETSI EN 301 129";
+      }
+    }
+  }
+
+  /*
+   * Radio Link Protection Groups
+   */
+
+  container radio-link-protection-groups {
+    description
+      "Configuration of radio link protected groups (1+1) of
+       carrier terminations in a radio link. More than one
+       protected group per radio-link-terminal is allowed.";
+
+    uses ifprot:protection-groups {
+
+      refine protection-group/members {
+        must "derived-from-or-self(/if:interfaces/if:interface"
+           + "[if:name = current()]"
+           + "/if:type, 'mw-types:carrier-termination')" {
+          description
+            "The type of a protection member must be
+             'carrier-termination'.";
+        }
+      }
+
+      refine protection-group/working-entity {
+        must "derived-from-or-self(/if:interfaces/if:interface"
+           + "[if:name = current()]"
+           + "/if:type, 'mw-types:carrier-termination')" {
+          description
+            "The type of a working-entity must be
+             'carrier-termination'.";
+        }
+      }
+    }
+  }
+
+  /*
+   * XPIC & MIMO groups - Configuration data nodes
+   */
+
+   container xpic-pairs {
+    if-feature xpic;
+    description
+      "Configuration of carrier termination pairs
+       for operation in XPIC mode.";
+    reference "ETSI TR 102 311";
+
+    list xpic-pair {
+      key "name";
+      description
+        "List of carrier termination pairs in XPIC mode.";
+
+      leaf name {
+        type string;
+        description
+          "Name used for identification of the XPIC pair.";
+      }
+
+      leaf enabled {
+        type boolean;
+        default "false";
+        description
+          "Enable(true)/disable(false) XPIC";
+      }
+
+      leaf-list members {
+        type if:interface-ref;
+        must "derived-from-or-self(/if:interfaces/if:interface"
+           + "[if:name = current()]"
+           + "/if:type, 'mw-types:carrier-termination')" {
+          description
+            "The type of a member must be 'carrier-termination'.";
+        }
+        min-elements 2;
+        max-elements 2;
+        description
+          "Association to XPIC pairs used in the radio link
+           terminal.";
+      }
+    }
+  }
+
+  container mimo-groups {
+    if-feature mimo;
+    description
+      "Configuration of carrier terminations
+      for operation in MIMO mode.";
+    reference "ETSI TR 102 311";
+
+    list mimo-group {
+      key "name";
+      description
+        "List of carrier terminations in MIMO mode.";
+
+      leaf name {
+        type string;
+        description
+          "Name used for identification of the MIMO group.";
+      }
+
+      leaf enabled {
+        type boolean;
+        default "false";
+        description
+          "Enable(true)/disable(false) MIMO";
+      }
+
+      leaf-list members {
+        type if:interface-ref;
+        must "derived-from-or-self(/if:interfaces/if:interface"
+           + "[if:name = current()]"
+           + "/if:type, 'mw-types:carrier-termination')" {
+          description
+            "The type of a member must be 'carrier-termination'.";
+        }
+
+        min-elements 2;
+        description
+          "Association to a MIMO group if used in the radio
+           link terminal.";
+      }
+    }
+  }
+}
+
+<CODE ENDS>
+]]> 
+    </artwork>
+   </figure>  
+  </section>
+  <!--  Microwave Radio Link YANG Module  -->
+
+  <section anchor="codeB" title="Interface Protection YANG Module" toc="default">
+   <t>The data nodes for management of the interface protection functionality is broken out from the Microwave Radio Link Module into a separate and generic YANG data module in order to make it available also for other interface types.</t>
+   
+   <t>This module imports modules from <xref target="RFC8343" pageno="false" format="default" />, and it references <xref target="G.808.1" pageno="false" format="default" />.</t>
+   
+   <figure anchor="YANGprotection" title="" suppress-title="true" align="left" alt="" width="" height="">
+    <artwork xml:space="preserve" name="" type="" align="left" alt="" width="" height="">
+<![CDATA[
+<CODE BEGINS> file "ietf-interface-protection@2018-06-30.yang"
+
+module ietf-interface-protection {
+  yang-version 1.1;
+  namespace "urn:ietf:params:xml:ns:yang:ietf-interface-protection";
+  prefix ifprot;
+
+  import ietf-interfaces {
+    prefix if;
+    reference "RFC8343";
+  }
+
+  organization
+    "Internet Engineering Task Force (IETF) CCAMP WG";
+  contact
+    "WG List: <mailto:ccamp@ietf.org>
+
+    ID-draft editors:
+      Jonas Ahlberg (jonas.ahlberg@ericsson.com);
+      Min Ye (amy.yemin@huawei.com);
+      Xi Li (Xi.Li@neclab.eu);
+      Daniela Spreafico (daniela.spreafico@nokia.com)
+      Marko Vaupotic (Marko.Vaupotic@aviatnet.com)";
+
+  description
+    "This is a module for the entities in
+    a generic interface protection mechanism.
+
+    Copyright (c) 2018 IETF Trust and the persons identified as
+    authors of the code.  All rights reserved.
+
+    Redistribution and use in source and binary forms, with or
+    without modification, is permitted pursuant to, and subject
+    to the license terms contained in, the Simplified BSD License
+    set forth in Section 4.c of the IETF Trust's Legal Provisions
+    Relating to IETF Documents
+    (http://trustee.ietf.org/license-info).
+
+    This version of this YANG module is part of RFC XXXX; see
+    the RFC itself for full legal notices.
+
+    Copyright (c) 2018 IETF Trust and the persons identified as
+    authors of the code.  All rights reserved.";
+
+  revision 2018-06-30 {
+    description "Initial revision.";
+    reference "RFC XXXX: A YANG Data Model for Microwave Radio Link";
+  }
+
+  /*
+   * Protection architecture type identities
+   */
+
+  identity protection-architecture-type {
+    description
+      "protection architecture type";
+    reference "ITU-T G.808.1";
+  }
+
+  identity one-plus-one-type {
+    base protection-architecture-type;
+    description
+      "1+1, One interface protects
+      another one interface.";
+    reference "ITU-T G.808.1";
+  }
+
+  identity one-to-n-type {
+    base protection-architecture-type;
+    description
+      "1:N, One interface protects
+      n other interfaces.";
+    reference "ITU-T G.808.1";
+  }
+
+  /*
+   * Protection states identities
+   */
+
+  identity protection-states {
+    description
+     "Identities describing the status of the protection,
+     in a group of interfaces configured in
+     a protection mode.";
+  }
+
+  identity unprotected {
+    base protection-states;
+    description "Not protected";
+  }
+
+  identity protected {
+    base protection-states;
+    description "Protected";
+  }
+
+  identity unable-to-protect {
+    base protection-states;
+    description "Unable to protect";
+  }
+
+  /*
+   * Protection Groups
+   */
+
+  grouping protection-groups {
+    description
+      "Configuration of protected groups (1+1) of interfaces
+      providing protection for each other. More than one protected
+      group per higher-layer-interface is allowed.";
+
+    list protection-group {
+      key "name";
+      description
+      "List of protected groups of interfaces
+      in a higher-layer-interface.";
+
+      leaf name {
+        type string;
+        description
+          "Name used for identification of the protection group";
+      }
+
+      leaf protection-architecture-type {
+        type identityref{
+          base protection-architecture-type;
+        }
+        default "ifprot:one-plus-one-type";
+        description
+          "The type of protection architecture used, e.g. one
+          interface protecting one or several other interfaces.";
+        reference "ITU-T G.808.1";
+      }
+
+      leaf-list members {
+        type if:interface-ref;
+        min-elements 2;
+        description
+          "Association to a group of interfaces configured for
+          protection and used by a higher-layer-interface.";
+      }
+
+      leaf operation-type {
+        type enumeration {
+          enum "non-revertive" {
+            description
+              "In non revertive operation, the traffic does not
+               return to the working interface if the switch requests
+               are terminated.";
+            reference "ITU-T G.808.1";
+          }
+          enum "revertive" {
+            description
+              "In revertive operation, the traffic always
+               returns to (or remains on) the working interface
+               if the switch requests are terminated.";
+            reference "ITU-T G.808.1";
+          }
+        }
+        default "non-revertive";
+        description
+          "The type of protection operation, i.e. revertive
+           or non-revertive operation.";
+      }
+
+      leaf-list working-entity  {
+        when "../operation-type = 'revertive'";
+        type if:interface-ref;
+        min-elements 1;
+        description
+          "The interfaces over which the traffic normally should
+          be transported over when there is no need to use the
+          protecting interface.";
+      }
+
+      leaf revertive-wait-to-restore {
+        when "../operation-type = 'revertive'";
+        type uint16;
+        units "seconds";
+        default "0";
+        description
+          "The time to wait before switching back to the working
+          interface if operation-type is revertive.";
+        reference "ITU-T G.808.1";
+      }
+
+      leaf hold-off-timer {
+        type uint16;
+        units "milliseconds";
+        default "0";
+        description
+          "Time interval after the detection of a fault and its
+          confirmation as a condition requiring the protection
+          switching procedure.";
+        reference "ITU-T G.808.1";
+      }
+
+      leaf status {
+        type identityref {
+          base protection-states;
+        }
+        config false;
+        description
+          "Status of the protection, in a group of interfaces
+           configured in a protection mode.";
+        reference "ITU-T G.808.1";
+      }
+
+      action manual-switch-working{
+        description
+          "A switch action initiated by an operator command.
+           It switches normal traffic signal to the working
+           transport entity.";
+        reference "ITU-T G.808.1";
+      }
+
+      action manual-switch-protection{
+        description
+          "A switch action initiated by an operator command.
+           It switches normal traffic signal to the protection
+           transport entity.";
+        reference "ITU-T G.808.1";
+      }
+
+      action forced-switch{
+        description
+          "A switch action initiated by an operator command.
+           It switches normal traffic signal to the protection
+           transport entity and forces it to remain on that
+           entity even when criteria for switching back to
+           the original entity are fulfilled.";
+        reference "ITU-T G.808.1";
+      }
+
+      action lockout-of-protection{
+        description
+          "A switch action temporarily disables access to the
+           protection transport entity for all signals.";
+        reference "ITU-T G.808.1";
+      }
+
+      action freeze{
+        description
+          "A switch action temporarily prevents any switch action
+           to be taken and, as such, freezes the current state.
+           Until the freeze is cleared, additional near-end external
+           commands are rejected and fault condition changes and
+           received APS messages are ignored..";
+        reference "ITU-T G.808.1";
+      }
+
+      action exercise{
+        description
+          "A switch action to test if the APS communication is
+           operating correctly. It is lower priority than any 'real'
+           switch request..";
+        reference "ITU-T G.808.1";
+      }
+
+      action clear{
+        description
+          "An action clears all switch commands.";
+        reference "ITU-T G.808.1";
+      }
+    }
+  }
+}
+
+<CODE ENDS>
+]]> 
+    </artwork>
+   </figure>  
+  </section>
+  <!--  Interface Protection YANG Module  -->
+  
+  <section anchor="codeC" title="Microwave Types YANG Module" toc="default">
+   <t>This module defines a collection of common data types using the YANG data modeling language. These common types are designed to be imported by other modules defined in the microwave area.</t>
+   
+   <figure anchor="YANGtypes" title="" suppress-title="true" align="left" alt="" width="" height="">
+    <artwork xml:space="preserve" name="" type="" align="left" alt="" width="" height="">
+<![CDATA[
+<CODE BEGINS> file "ietf-microwave-types@2018-06-30.yang"
+
+module ietf-microwave-types {
+  yang-version 1.1;
+  namespace "urn:ietf:params:xml:ns:yang:ietf-microwave-types";
+  prefix mw-types;
+
+  import iana-if-type {
+    prefix ianaift;
+    reference "RFC 7224";
+  }
+
+  organization
+    "Internet Engineering Task Force (IETF) CCAMP WG";
+  contact
+    "WG List: <mailto:ccamp@ietf.org>
+
+    ID-draft editors:
+      Jonas Ahlberg (jonas.ahlberg@ericsson.com);
+      Min Ye (amy.yemin@huawei.com);
+      Xi Li (Xi.Li@neclab.eu);
+      Daniela Spreafico (daniela.spreafico@nokia.com)
+      Marko Vaupotic (Marko.Vaupotic@aviatnet.com)";
+
+  description
+    "This module contains a collection of YANG data types
+     considered generally useful for microwave interfaces.
+
+    Copyright (c) 2018 IETF Trust and the persons identified as
+    authors of the code.  All rights reserved.
+
+    Redistribution and use in source and binary forms, with or
+    without modification, is permitted pursuant to, and subject
+    to the license terms contained in, the Simplified BSD License
+    set forth in Section 4.c of the IETF Trust's Legal Provisions
+    Relating to IETF Documents
+    (http://trustee.ietf.org/license-info).
+
+    This version of this YANG module is part of RFC XXXX; see
+    the RFC itself for full legal notices.
+
+    Copyright (c) 2018 IETF Trust and the persons identified as
+    authors of the code.  All rights reserved.";
+
+  revision 2018-06-30 {
+    description "Initial revision.";
+    reference "RFC XXXX: A YANG Data Model for Microwave Radio Link";
+  }
+
+  /*
+   * Interface identities
+   */
+
+  identity radio-link-terminal {
+    base ianaift:iana-interface-type;
+    description
+      "Interface identity for a radio link terminal.";
+  }
+
+  identity carrier-termination {
+    base ianaift:iana-interface-type;
+    description
+     "Interface identity for a carrier termination.";
+  }
+
+  /*
+   * Radio-link-terminal mode identities
+   */
+
+  identity rlt-mode {
+    description
+      "A description of the mode in which the radio link
+      terminal is configured. The format is X plus Y.
+      X represent the number of bonded carrier terminations.
+      Y represent the number of protecting carrier
+      terminations.";
+  }
+
+  identity one-plus-zero {
+    base rlt-mode;
+    description
+      "1 carrier termination only.";
+  }
+
+  identity one-plus-one {
+    base rlt-mode;
+    description
+      "1 carrier termination
+      and 1 protecting carrier termination.";
+  }
+
+  identity two-plus-zero {
+    base rlt-mode;
+    description
+      "2 bonded carrier terminations.";
+  }
+
+  /*
+   * Coding and modulation identities
+   */
+
+  identity coding-modulation {
+    description
+      "The coding and modulation schemes.";
+  }
+
+  identity half-bpsk {
+    base coding-modulation;
+    description
+      "Half BPSK coding and modulation scheme.";
+  }
+
+  identity half-bpsk-strong {
+    base half-bpsk;
+    description
+      "Half BPSK strong coding and modulation scheme.";
+  }
+
+  identity half-bpsk-light {
+    base half-bpsk;
+    description
+      "Half BPSK light coding and modulation scheme.";
+  }
+
+  identity bpsk {
+    base coding-modulation;
+    description
+      "BPSK coding and modulation scheme.";
+  }
+
+  identity bpsk-strong {
+    base bpsk;
+    description
+      "BPSK strong coding and modulation scheme.";
+  }
+
+  identity bpsk-light {
+    base bpsk;
+    description
+      "BPSK light coding and modulation scheme.";
+  }
+
+  identity qpsk {
+    base coding-modulation;
+    description
+      "QPSK coding and modulation scheme.";
+  }
+
+  identity qam-4 {
+    base coding-modulation;
+    description
+      "4 QAM coding and modulation scheme.";
+  }
+
+  identity qam-4-strong {
+    base qam-4;
+    description
+      "4 QAM strong coding and modulation scheme.";
+  }
+
+  identity qam-4-light {
+    base qam-4;
+    description
+      "4 QAM light coding and modulation scheme.";
+  }
+
+  identity qam-16 {
+    base coding-modulation;
+    description
+      "16 QAM coding and modulation scheme.";
+  }
+
+  identity qam-16-strong {
+    base qam-16;
+    description
+      "16 QAM strong coding and modulation scheme.";
+  }
+
+  identity qam-16-light {
+    base qam-16;
+    description
+      "16 QAM light coding and modulation scheme.";
+  }
+
+  identity qam-32 {
+    base coding-modulation;
+    description
+      "32 QAM coding and modulation scheme.";
+  }
+
+  identity qam-32-strong {
+    base qam-32;
+    description
+      "32 QAM strong coding and modulation scheme.";
+  }
+
+  identity qam-32-light {
+    base qam-32;
+    description
+      "32 QAM light coding and modulation scheme.";
+  }
+
+  identity qam-64 {
+    base coding-modulation;
+    description
+      "64 QAM coding and modulation scheme.";
+  }
+
+  identity qam-64-strong {
+    base qam-64;
+    description
+      "64 QAM strong coding and modulation scheme.";
+  }
+
+  identity qam-64-light {
+    base qam-64;
+    description
+      "64 QAM light coding and modulation scheme.";
+  }
+
+  identity qam-128 {
+    base coding-modulation;
+    description
+      "128 QAM coding and modulation scheme.";
+  }
+
+  identity qam-128-strong {
+    base qam-128;
+    description
+      "128 QAM strong coding and modulation scheme.";
+  }
+
+  identity qam-128-light {
+    base qam-128;
+    description
+      "128 QAM light coding and modulation scheme.";
+  }
+
+  identity qam-256 {
+    base coding-modulation;
+    description
+      "256 QAM coding and modulation scheme.";
+  }
+
+  identity qam-256-strong {
+    base qam-256;
+    description
+      "256 QAM strong coding and modulation scheme.";
+  }
+
+  identity qam-256-light {
+    base qam-256;
+    description
+      "256 QAM light coding and modulation scheme.";
+  }
+
+  identity qam-512 {
+    base coding-modulation;
+    description
+      "512 QAM coding and modulation scheme.";
+  }
+
+  identity qam-512-strong {
+    base qam-512;
+    description
+      "512 QAM strong coding and modulation scheme.";
+  }
+
+  identity qam-512-light {
+    base qam-512;
+    description
+      "512 QAM light coding and modulation scheme.";
+  }
+
+  identity qam-1024 {
+    base coding-modulation;
+    description
+      "1024 QAM coding and modulation scheme.";
+  }
+
+  identity qam-1024-strong {
+    base qam-1024;
+    description
+      "1024 QAM strong coding and modulation scheme.";
+  }
+
+  identity qam-1024-light {
+    base qam-1024;
+    description
+      "1024 QAM light coding and modulation scheme.";
+  }
+
+  identity qam-2048 {
+    base coding-modulation;
+    description
+      "2048 QAM coding and modulation scheme.";
+  }
+
+  identity qam-2048-strong {
+    base qam-2048;
+    description
+      "2048 QAM strong coding and modulation scheme.";
+  }
+
+  identity qam-2048-light {
+    base qam-2048;
+    description
+      "2048 QAM light coding and modulation scheme.";
+  }
+
+  identity qam-4096 {
+    base coding-modulation;
+    description
+      "4096 QAM coding and modulation scheme.";
+  }
+
+  identity qam-4096-strong {
+    base qam-4096;
+    description
+      "4096 QAM strong coding and modulation scheme.";
+  }
+
+  identity qam-4096-light {
+    base qam-4096;
+    description
+      "4096 QAM light coding and modulation scheme.";
+  }
+
+  /*
+   * TDM-type identities
+   */
+
+  identity tdm-type {
+    description
+      "A description of the type of TDM connection,
+      also indicating the supported capacity of the
+      connection.";
+  }
+
+  identity E1 {
+    base tdm-type;
+    description
+      "E1 connection, 2.048 Mbit/s.";
+  }
+
+  identity STM-1 {
+    base tdm-type;
+    description
+      "STM-1 connection, 155.52 Mbit/s.";
+  }
+}
+
+<CODE ENDS>
+]]> 
+    </artwork>
+   </figure>  
+  </section>
+  <!--  Microwave Types YANG Module  -->
+
+  <section anchor="Security" title="Security Considerations" toc="default">
+   <t>The YANG module specified in this document defines a schema for data that is designed to be accessed via network management protocols such as NETCONF <xref target="RFC6241" pageno="false" format="default" /> or RESTCONF <xref target="RFC8040" pageno="false" format="default" />. The lowest NETCONF layer is the secure transport layer, and the mandatory-to-implement secure transport is Secure Shell (SSH) <xref target="RFC6242" pageno="false" format="default" />. The lowest RESTCONF layer is HTTPS, and the mandatory-to-implement secure transport is TLS <xref target="RFC8446" pageno="false" format="default" />.</t>
+   
+   <t>The NETCONF access control model <xref target="RFC8341" pageno="false" format="default" /> provides the means to restrict access for particular NETCONF or RESTCONF users to a preconfigured subset of all available NETCONF or RESTCONF protocol operations and content.</t>
+   
+   <t>There are a number of data nodes defined in this YANG module that are writable/creatable/deletable (i.e., config true, which is the default). These data nodes may be considered sensitive or vulnerable in some network environments.  Write operations (e.g., edit-config) to these data nodes without proper protection can have a negative effect on network operations. These are the subtrees and data nodes and their sensitivity/vulnerability:</t> 
+   
+   <t>Interfaces of type radio-link-terminal:</t>
+   <figure>
+    <artwork xml:space="preserve" name="" type="" align="left" alt="" width="" height="">
+<![CDATA[
+   /if:interfaces/if:interface/carrier-terminations,
+   /if:interfaces/if:interface/rlp-groups,
+   /if:interfaces/if:interface/xpic-pairs,
+   /if:interfaces/if:interface/mimo-groups, and
+   /if:interfaces/if:interface/tdm-connections:
+]]>
+    </artwork>
+   </figure>
+   <t>These lists represent the configuration of the radio-link-terminal and it need to match the configuration of the radio-link-terminal
+   on the other side of the radio link. Unauthorized access to these data nodes could interrupt the ability to forward traffic.</t>
+   
+   <t>Interfaces of type carrier-termination:</t>
+   <figure>
+    <artwork xml:space="preserve" name="" type="" align="left" alt="" width="" height="">
+<![CDATA[
+   /if:interfaces/if:interface/carrier-id,
+   /if:interfaces/if:interface/tx-enabled,
+   /if:interfaces/if:interface/tx-frequency,
+   /if:interfaces/if:interface/rx-frequency,
+   /if:interfaces/if:interface/duplex-distance,
+   /if:interfaces/if:interface/channel-separation,
+   /if:interfaces/if:interface/rtpc/maximum-nominal-power,
+   /if:interfaces/if:interface/atpc/maximum-nominal-power,
+   /if:interfaces/if:interface/atpc/atpc-lower-threshold,
+   /if:interfaces/if:interface/atpc/atpc-upper-threshold,
+   /if:interfaces/if:interface/single/selected-cm,
+   /if:interfaces/if:interface/adaptive/selected-min-acm,
+   /if:interfaces/if:interface/adaptive/selected-max-acm,
+   /if:interfaces/if:interface/if-loop, and
+   /if:interfaces/if:interface/rf-loop:
+]]>
+    </artwork>
+   </figure>
+   <t>These data nodes represent the configuration of the carrier-termination and it need to match the configuration of the carrier-termination on the other side of the carrier. Unauthorized access to these data nodes could interrupt the ability to forward traffic.</t>
+   
+   <t>Radio link protection:</t>
+   <figure>
+    <artwork xml:space="preserve" name="" type="" align="left" alt="" width="" height="">
+<![CDATA[
+   /radio-link-protection-groups/protection-group:
+]]>
+    </artwork>
+   </figure>
+   <t>This list of protection groups and the constituent data nodes represents the configuration of the protection of carrier terminations. Unauthorized access to these data nodes could interrupt the ability to forward traffic or remove the ability to
+   perform a necessary protection switch.</t>
+   
+   <t>XPIC:</t>
+   <figure>
+    <artwork xml:space="preserve" name="" type="" align="left" alt="" width="" height="">
+<![CDATA[
+   /xpic-pairs:
+]]>
+    </artwork>
+   </figure>
+   <t>This list represents the XPIC configuration of a pair carriers. Unauthorized access to these data nodes could interrupt the ability to forward traffic.</t>
+   
+   <t>MIMO:</t>
+   <figure>
+    <artwork xml:space="preserve" name="" type="" align="left" alt="" width="" height="">
+<![CDATA[
+   /mimo-groups:
+]]>
+    </artwork>
+   </figure>
+   <t>This list represents the MIMO configuration of multiple carriers. Unauthorized access to these data nodes could interrupt the ability to forward traffic.</t>
+   
+   <t>The security considerations of <xref target="RFC8343" pageno="false" format="default" /> also apply to this document.</t>
+  </section>
+  <!--  Security Considerations END  -->
+ 
+  <section anchor="IANA" title="IANA Considerations" toc="default">
+   <t>It is proposed that IANA should assign new URIs from the "IETF XML Registry" <xref target="RFC3688" pageno="false" format="default" /> as follows:</t>
+   <figure>
+    <artwork xml:space="preserve" name="" type="" align="left" alt="" width="" height="">
+<![CDATA[
+   URI: urn:ietf:params:xml:ns:yang:ietf-microwave-radio-link
+   Registrant Contact: The IESG
+   XML: N/A; the requested URI is an XML namespace.
+   
+   URI: urn:ietf:params:xml:ns:yang:ietf-interface-protection
+   Registrant Contact: The IESG
+   XML: N/A; the requested URI is an XML namespace.
+
+   URI: urn:ietf:params:xml:ns:yang:ietf-microwave-types
+   Registrant Contact: The IESG
+   XML: N/A; the requested URI is an XML namespace.
+]]>
+    </artwork>
+   </figure>
+   <t></t>
+   <t>It is proposed that IANA should record YANG module names in the "YANG Module Names" registry <xref target="RFC6020" pageno="false" format="default" /> as follows:</t>
+   <figure>
+    <artwork xml:space="preserve" name="" type="" align="left" alt="" width="" height="">
+<![CDATA[
+   Name: ietf-microwave-radio-link
+   Namespace: urn:ietf:params:xml:ns:yang:ietf-microwave-radio-link
+   Prefix: mrl
+   Reference: RFC XXXX
+
+   Name: ietf-interface-protection
+   Namespace: urn:ietf:params:xml:ns:yang:ietf-interface-protection
+   Prefix: ifprot
+   Reference: RFC XXXX
+   
+   Name: ietf-microwave-types
+   Namespace: urn:ietf:params:xml:ns:yang:ietf-microwave-types
+   Prefix: mw-types
+   Reference: RFC XXXX
+]]>
+    </artwork>
+   </figure>
+  </section>
+  <!--  IANA Considerations END  -->
+
+ </middle>
+
+
+ <back>
+  <references title="Normative References">
+   <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml"?> 
+   <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.3688.xml"?> 
+   <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.6020.xml"?> 
+   <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.6241.xml"?> 
+   <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.6242.xml"?> 
+   <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.6991.xml"?> 
+   <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.7224.xml"?> 
+   <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.8040.xml"?> 
+   <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.8174.xml"?> 
+   <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.8341.xml"?> 
+   <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.8343.xml"?>
+   <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.8446.xml"?> 
+  </references>
+  <!--  Normative References END  -->
+
+  <references title="Informative References">
+   <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.8340.xml"?> 
+   <?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.8342.xml"?> 
+   <?rfc include="reference.I-D.ahlberg-ccamp-microwave-radio-link"?> 
+   <?rfc include="reference.I-D.ietf-ccamp-microwave-framework"?> 
+  
+   <reference anchor="EN301129">
+    <front>
+     <title>Transmission and Multiplexing (TM); Digital Radio Relay Systems (DRRS); Synchronous Digital Hierarchy (SDH); System performance monitoring parameters of SDH DRRS</title>
+     <author fullname="ETSI/"/> 
+     <date month="May" year="1995"/>
+    </front>
+    <seriesInfo name="EN 301 129 V1.1.2" value="" />
+   </reference>
+   
+   <reference anchor="EN302217-1">
+    <front>
+     <title>Fixed Radio Systems; Characteristics and requirements for point-to-point equipment and antennas; Part 1: Overview, common characteristics and system-dependent requirements</title>
+     <author fullname="ETSI/"/> 
+     <date month="June" year="2016"/>
+    </front>
+    <seriesInfo name="EN 302 217-1 V3.0.5" value="" />
+   </reference>
+   
+   <reference anchor="EN302217-2">
+    <front>
+     <title>Fixed Radio Systems; Characteristics and requirements for point to-point equipment and antennas; Part 2: Digital systems operating in frequency bands from 1 GHz to 86 GHz; Harmonised Standard covering the essential requirements of article 3.2 of Directive 2014/53/EU</title>
+     <author fullname="ETSI/"/> 
+     <date month="May" year="2017"/>
+    </front>
+    <seriesInfo name="EN 302 217-2 V3.1.1" value="" />
+   </reference>
+
+   <reference anchor="G.808.1">
+    <front>
+     <title>SERIES G: TRANSMISSION SYSTEMS AND MEDIA, DIGITAL SYSTEMS AND NETWORKS; Digital networks ; General aspects Generic protection switching ; Linear trail and subnetwork protection</title>
+     <author fullname="ITU-T/"/> 
+     <date month="May" year="2014"/>
+    </front>
+    <seriesInfo name="ITU-T Rec. G.808.1" value="" />
+   </reference>
+   
+   <reference anchor="G.826">
+    <front>
+     <title>SERIES G: TRANSMISSION SYSTEMS AND MEDIA, DIGITAL SYSTEMS AND NETWORKS; Digital networks ; Quality and availability targets End-to-end error performance parameters and objectives for international, constant bit-rate digital paths and connections</title>
+     <author fullname="ITU-T/"/> 
+     <date month="December" year="2002"/>
+    </front>
+    <seriesInfo name="ITU-T Rec. G.826" value="" />
+   </reference>
+
+   <reference anchor="TR102311">
+    <front>
+     <title>Fixed Radio Systems; Point-to-point equipment; Specific aspects of the spatial frequency reuse method</title>
+     <author fullname="ETSI/"/> 
+     <date month="November" year="2015"/>
+    </front>
+    <seriesInfo name="ETSI TR 102 311 V1.2.1" value="" />
+   </reference>
+
+   <reference anchor="ONF-model" target="https://www.opennetworking.org/images/stories/downloads/sdn-resources/technical-reports/TR-532-Microwave-Information-Model-V1.pdf">
+    <front>
+     <title>Microwave Information Model</title>
+     <author fullname="ONF TR-532/"/> 
+     <date month="December" year="2016"/>
+    </front>
+    <seriesInfo name="version 1.0" value="" />
+   </reference>
+  </references>
+  <!--  Informative References END  -->
+ 
+  <section title="Example: 1+0 and 2+0 configuration instances" toc="default">
+   <t>This section gives simple examples of 1+0 and 2+0 instance using the YANG module defined in this draft. The examples are not intended as a complete module for 1+0 and 2+0 configuration.</t>
+
+   <section title="1+0 instance" toc="default">
+   
+    <figure><artwork><![CDATA[
+
+                /--------- Radio Link ---------\
+                 Near End              Far End
+
+           +---------------+           +---------------+
+           |  Radio Link   |           | Radio Link    |
+           |  Terminal - A |           | Terminal - B  |
+           |               |           |               |
+           |               |           |               |
+           | +-----------+ |           | +-----------+ |
+           | |           | | Carrier A | |           | |
+           | |  Carrier  | |<--------->| |  Carrier  | |
+           | |Termination| |           | |Termination| |
+           | |     -1    | |           | |   -1      | |
+           | +-----------+ |           | +-----------+ |
+           |               |           |               |
+           |               |           |               |
+           +---------------+           +---------------+
+
+     \--- Microwave Node ---/          \--- Microwave Node ---/
+                   Figure A-1 1+0 example
+
+     Figure A-1 shows a 1+0 example.  The following instance
+     shows the 1+0 configuration of Near End node.
+
+   "interface": [
+      {
+      //RLT-A
+        "name": "RLT-A",
+        "description": "Radio Link Terminal A",
+        "type": "mrl:radio-link-terminal",
+        "id": "RLT-A",
+        "mode": "one-plus-zero",
+        "carrier-terminations": [
+          "RLT-A:CT-1",
+        ],
+        "tdm-connections": [
+          "tdm-type": "E1",
+          "tdm-connections": "4",
+        ]
+      }
+
+      {
+      //CT-1
+        "name": "RLT-A:CT-1",
+        "description": "Carrier Termination 1",
+        "type": "mrl:carrier-termination",
+        "carrier-id": "A",
+        "tx-enabled": true,
+        "tx-frequency": 10728000,
+        "duplex-distance": 644000,
+        "channel-separation": 28,
+        "polarization": not-specified,
+        "rtpc": {
+          "maximum-nominal-power": 20,
+        }
+        "single":{
+          "selected-cm": "qam-512",
+        } 
+      },
+   ]
+]]></artwork></figure>   
+   </section> 
+   <!--  1+0 instance END  -->
+
+   <section title="2+0 instance" toc="default">
+   
+    <figure><artwork><![CDATA[
+
+    Figure A-2 shows a 2+0 example.
+
+
+                 /--------- Radio Link ---------\
+                  Near End              Far End
+
+           +---------------+           +---------------+
+           | Radio Link    |           | Radio Link    |
+           | Terminal -A   |           | Terminal -B   |
+           |               |           |               |
+           |               |           |               |
+           | +-----------+ |           | +-----------+ |
+           | |           | | Carrier A | |           | |
+           | |  Carrier  | |<--------->| |  Carrier  | |
+           | |Termination| |           | |Termination| |
+           | |    -1     | |           | |     -1    | |
+           | +-----------+ |           | +-----------+ |
+           |               |           |               |
+           | +-----------+ |           | +-----------+ |
+           | |           | | Carrier B | |           | |
+           | |  Carrier  | |<--------->| |  Carrier  | |
+           | |Termination| |           | |Termination| |
+           | |    -2     | |           | |     -2    | |
+           | +-----------+ |           | +-----------+ |
+           |               |           |               |
+           +---------------+           +---------------+
+
+     \--- Microwave Node ---/          \--- Microwave Node ---/
+                Figure A-2 2+0 example
+
+
+   The following instance shows the 2+0 configuration of
+   Near End node.
+
+   "interface": [
+      {
+      //RLT-A
+        "name": "RLT-A",
+        "description": "Radio Link Terminal A",
+        "type": "mrl:radio-link-terminal",
+        "id": "RLT-A",
+        "mode": "two-plus-zero",
+        "carrier-terminations": [
+          "RLT-A:CT-1",
+          "RLT-A:CT-2"
+        ],
+        "tdm-connections": [
+          "tdm-type": "E1",
+          "tdm-connections": "4",
+        ]
+      }
+
+      {
+      //CT-1
+        "name": "RLT-A:CT-1",
+        "description": "Carrier Termination 1",
+        "type": "mrl:carrier-termination",
+        "carrier-id": "A",
+        "tx-enabled": true,
+        "tx-frequency": 10728000,
+        "duplex-distance": 644000,
+        "channel-separation": 28,
+        "polarization": not-specified,
+        "rtpc": {
+          "maximum-nominal-power": 20,
+        }
+        "single":{
+          "selected-cm": "qam-512",
+        } 
+      },
+
+      {
+      //CT-2
+        "name": "RLT-A:CT-2",
+        "description": "Carrier Termination 2",
+        "type": "mrl:carrier-termination",
+        "carrier-id": "B",
+        "tx-enabled": true,
+        "tx-oper-status": on
+        "tx-frequency": 10618000,
+        "duplex-distance": 644000,
+        "channel-separation": 28,
+        "polarization": not-specified,
+        "rtpc": {
+          "maximum-nominal-power": 20,
+        }
+        "single":{
+          "selected-cm": "qam-512",
+        } 
+      },
+   ]
+]]></artwork></figure>   
+   </section> 
+   <!--  2+0 instance END  -->
+
+   <section title="2+0 XPIC instance" toc="default">
+   
+    <figure><artwork><![CDATA[
+
+   The following instance shows the XPIC configuration of
+   Near End node.
+   
+   "interface": [
+      {
+      //RLT-A
+        "name": "RLT-A",
+        "description": "Radio Link Terminal A",
+        "type": "mrl:radio-link-terminal",
+        "id": "RLT-A",
+        "mode": "two-plus-zero",
+        "carrier-terminations": [
+          "RLT-A:CT-1",
+          "RLT-A:CT-2"
+        ],
+        "xpic-pairs": [
+          "RLT-A:CT-1",
+          "RLT-A:CT-2"
+        ]
+        "tdm-connections": [
+          "tdm-type": "E1",
+          "tdm-connections": "4",
+        ]
+      }
+
+      {
+      //CT-1
+        "name": "RLT-A:CT-1",
+        "description": "Carrier Termination 1",
+        "type": "mrl:carrier-termination",
+        "carrier-id": "A",
+        "tx-enabled": true,
+        "tx-frequency": 10728000,
+        "duplex-distance": 644000,
+        "channel-separation": 28,
+        "polarization": not-specified,
+        "rtpc": {
+          "maximum-nominal-power": 20,
+        }
+        "single":{
+          "selected-cm": "qam-512",
+        } 
+      },
+
+      {
+      //CT-2
+        "name": "RLT-A:CT-2",
+        "description": "Carrier Termination 2",
+        "type": "mrl:carrier-termination",
+        "carrier-id": "B",
+        "tx-enabled": true,
+        "tx-oper-status": on
+        "tx-frequency": 10618000,
+        "duplex-distance": 644000,
+        "channel-separation": 28,
+        "polarization": not-specified,
+        "rtpc": {
+          "maximum-nominal-power": 20,
+        }
+        "single":{
+          "selected-cm": "qam-512",
+        } 
+      },
+   ] 
+]]></artwork></figure>   
+   </section> 
+   <!--  2+0 XPIC instance END  -->
+   
+  </section>
+  <!--  Example: 1+0 and 2+0 configuration instances END  -->
+
+  <section title="Contributors" toc="default">  
+  <figure><artwork><![CDATA[
+Koji Kawada
+NEC Corporation
+1753, Shimonumabe Nakahara-ku
+Kawasaki, Kanagawa 211-8666
+Japan
+
+Email: k-kawada@ah.jp.nec.com
+
+
+Carlos J. Bernardos
+Universidad Carlos III de Madrid
+Av. Universidad, 30
+Leganes, Madrid  28911
+Spain (ESP)
+
+Email: cjbc@it.uc3m.es
+]]></artwork></figure>
+  </section>
+  <!--  Contributors END  --> 
+  
+ </back>
+</rfc>
