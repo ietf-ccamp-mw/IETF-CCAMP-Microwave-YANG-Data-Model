@@ -1,1 +1,4 @@
-jfaklasdfjasklfj
+The 08 updated for draft-ietf-ccamp-mw-yang is mainly editorial, which includes:
+1.	Fixed the weird spacing warnings
+2.	Move the non IETF RFC (ETSI and ITU standards) to informative reference section 
+3.	Add IANA for ietf-microwave-types
