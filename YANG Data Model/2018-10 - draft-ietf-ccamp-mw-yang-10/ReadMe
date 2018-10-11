@@ -1,0 +1,7 @@
+We have now submitted a new version of the draft with the following changes that we hope address the feedback :
+- The date of the models have been updated to the same date as the draft
+- There is now a single space before all "{" in the draft
+- the comments have been removed from the JSON examples. The description leaf is enough to explain what the entry refers to.
+- I've tried to correct the usage of commas in the JSON examples. Please let me know if it's still not fully correct.
+- "(ESP)" is removed
+- " Maintained by IANA?: N" has been added for all modules in the IANA considerations, according to earlier feedback from IANA
